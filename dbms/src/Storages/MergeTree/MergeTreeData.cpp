@@ -1867,7 +1867,7 @@ void MergeTreeData::removePartContributionToColumnSizes(const DataPartPtr & part
     const auto & files = part->checksums.files;
 
     /// TODO This method doesn't take into account columns with multiple files.
-    for (const auto & column : columns.columns)
+    for (const auto & column : columns.getList())
     {
         const auto escaped_name = escapeForFileName(column.name);
         const auto bin_file_name = escaped_name + ".bin";
