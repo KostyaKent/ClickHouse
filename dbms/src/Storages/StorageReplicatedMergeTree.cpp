@@ -526,7 +526,7 @@ void StorageReplicatedMergeTree::checkTableStructure(bool skip_sanity_checks, bo
     {
         if (allow_alter &&
             (skip_sanity_checks ||
-             data.columns.columns.sizeOfDifference(columns_from_zk.columns) +
+             data.columns.ordinary.sizeOfDifference(columns_from_zk.ordinary) +
              data.columns.materialized.sizeOfDifference(columns_from_zk.materialized) <= 2))
         {
             LOG_WARNING(log, "Table structure in ZooKeeper is a little different from local table structure. Assuming ALTER.");

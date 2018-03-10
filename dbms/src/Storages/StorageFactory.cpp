@@ -64,9 +64,9 @@ StoragePtr StorageFactory::get(
     {
         /// Check for some special types, that are not allowed to be stored in tables. Example: NULL data type.
         /// Exception: any type is allowed in View, because plain (non-materialized) View does not store anything itself.
-        checkAllTypesAreAllowedInTable(columns.columns);
+        checkAllTypesAreAllowedInTable(columns.ordinary);
         checkAllTypesAreAllowedInTable(columns.materialized);
-        checkAllTypesAreAllowedInTable(columns.alias);
+        checkAllTypesAreAllowedInTable(columns.aliases);
 
         if (query.is_materialized_view)
         {

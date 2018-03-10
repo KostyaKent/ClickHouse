@@ -511,7 +511,7 @@ QueryProcessingStage::Enum InterpreterSelectQuery::executeFetchColumns(Pipeline 
     /// Are ALIAS columns required for query execution?
     auto alias_columns_required = false;
 
-    if (storage && !storage->columns.alias.empty())
+    if (storage && !storage->columns.aliases.empty())
     {
         for (const auto & column : required_columns)
         {

@@ -18,7 +18,7 @@ namespace DB
 StorageSystemColumns::StorageSystemColumns(const std::string & name_)
     : name(name_)
 {
-    columns.columns = NamesAndTypesList{
+    columns.ordinary = NamesAndTypesList{
         { "database",           std::make_shared<DataTypeString>() },
         { "table",              std::make_shared<DataTypeString>() },
         { "name",               std::make_shared<DataTypeString>() },
@@ -138,7 +138,7 @@ BlockInputStreams StorageSystemColumns::read(
             }
 
             columns = storage->columns.getList();
-            columns.insert(std::end(columns), std::begin(storage->columns.alias), std::end(storage->columns.alias));
+            columns.insert(std::end(columns), std::begin(storage->columns.aliases), std::end(storage->columns.aliases));
             column_defaults = storage->columns.defaults;
 
             /** Info about sizes of columns for tables of MergeTree family.

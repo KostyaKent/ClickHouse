@@ -29,19 +29,19 @@ namespace ErrorCodes
 
 NamesAndTypesList ColumnsDescription::getList() const
 {
-    return ext::collection_cast<NamesAndTypesList>(boost::join(columns, materialized));
+    return ext::collection_cast<NamesAndTypesList>(boost::join(ordinary, materialized));
 }
 
 
 Names ColumnsDescription::getNames() const
 {
-    return ext::map<Names>(boost::join(columns, materialized), [] (const auto & it) { return it.name; });
+    return ext::map<Names>(boost::join(ordinary, materialized), [] (const auto & it) { return it.name; });
 }
 
 
 NameAndTypePair ColumnsDescription::get(const String & column_name) const
 {
-    for (auto & it : boost::join(columns, materialized))
+    for (auto & it : boost::join(ordinary, materialized))
         if (it.name == column_name)
             return it;
     throw Exception("There is no column " + column_name + " in table.", ErrorCodes::NO_SUCH_COLUMN_IN_TABLE);
@@ -50,7 +50,7 @@ NameAndTypePair ColumnsDescription::get(const String & column_name) const
 
 bool ColumnsDescription::has(const String & column_name) const
 {
-    for (auto & it : boost::join(columns, materialized))
+    for (auto & it : boost::join(ordinary, materialized))
         if (it.name == column_name)
             return true;
     return false;
@@ -62,7 +62,7 @@ String ColumnsDescription::toString() const
     WriteBufferFromOwnString buf;
 
     writeString("columns format version: 1\n", buf);
-    writeText(columns.size() + materialized.size() + alias.size(), buf);
+    writeText(ordinary.size() + materialized.size() + aliases.size(), buf);
     writeString(" columns:\n", buf);
 
     const auto write_columns = [this, &buf] (const NamesAndTypesList & columns)
@@ -89,9 +89,9 @@ String ColumnsDescription::toString() const
         }
     };
 
-    write_columns(columns);
+    write_columns(ordinary);
     write_columns(materialized);
-    write_columns(alias);
+    write_columns(aliases);
 
     return buf.str();
 }
@@ -123,7 +123,7 @@ ColumnsDescription ColumnsDescription::parse(const String & str)
         {
             assertChar('\n', buf);
 
-            result.columns.emplace_back(column_name, std::move(type));
+            result.ordinary.emplace_back(column_name, std::move(type));
             continue;
         }
         assertChar('\t', buf);
@@ -142,11 +142,11 @@ ColumnsDescription ColumnsDescription::parse(const String & str)
         ASTPtr default_expr = parseQuery(expr_parser, begin, end, "default expression");
 
         if (ColumnDefaultType::Default == default_type)
-            result.columns.emplace_back(column_name, std::move(type));
+            result.ordinary.emplace_back(column_name, std::move(type));
         else if (ColumnDefaultType::Materialized == default_type)
             result.materialized.emplace_back(column_name, std::move(type));
         else if (ColumnDefaultType::Alias == default_type)
-            result.alias.emplace_back(column_name, std::move(type));
+            result.aliases.emplace_back(column_name, std::move(type));
 
         result.defaults.emplace(column_name, ColumnDefault{default_type, default_expr});
     }

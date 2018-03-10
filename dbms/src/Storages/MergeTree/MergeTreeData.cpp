@@ -902,7 +902,7 @@ void MergeTreeData::checkAlter(const AlterCommands & commands)
         columns_alter_forbidden.insert(merging_params.sign_column);
 
     std::map<String, const IDataType *> old_types;
-    for (const auto & column : columns.columns)
+    for (const auto & column : columns.ordinary)
         old_types.emplace(column.name, column.type.get());
 
     for (const AlterCommand & command : commands)

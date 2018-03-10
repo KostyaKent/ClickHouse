@@ -305,7 +305,7 @@ ASTPtr InterpreterCreateQuery::formatColumns(const ColumnsDescription & columns)
 {
     auto columns_list = std::make_shared<ASTExpressionList>();
 
-    for (const auto & column : boost::join(columns.columns, boost::join(columns.materialized, columns.alias)))
+    for (const auto & column : boost::join(columns.ordinary, boost::join(columns.materialized, columns.aliases)))
     {
         const auto column_declaration = std::make_shared<ASTColumnDeclaration>();
         ASTPtr column_declaration_ptr{column_declaration};
@@ -340,11 +340,11 @@ ColumnsDescription InterpreterCreateQuery::getColumnsDescription(const ASTExpres
 
     auto && columns_and_defaults = parseColumns(columns, context);
     res.materialized = removeAndReturnColumns(columns_and_defaults, ColumnDefaultType::Materialized);
-    res.alias = removeAndReturnColumns(columns_and_defaults, ColumnDefaultType::Alias);
-    res.columns = std::move(columns_and_defaults.first);
+    res.aliases = removeAndReturnColumns(columns_and_defaults, ColumnDefaultType::Alias);
+    res.ordinary = std::move(columns_and_defaults.first);
     res.defaults = std::move(columns_and_defaults.second);
 
-    if (res.columns.size() + res.materialized.size() == 0)
+    if (res.ordinary.size() + res.materialized.size() == 0)
         throw Exception{"Cannot CREATE table without physical columns", ErrorCodes::EMPTY_LIST_OF_COLUMNS_PASSED};
 
     return res;
@@ -367,7 +367,7 @@ ColumnsDescription InterpreterCreateQuery::setColumns(
     else if (create.select)
     {
         for (size_t i = 0; i < as_select_sample.columns(); ++i)
-            res.columns.emplace_back(as_select_sample.safeGetByPosition(i).name, as_select_sample.safeGetByPosition(i).type);
+            res.ordinary.emplace_back(as_select_sample.safeGetByPosition(i).name, as_select_sample.safeGetByPosition(i).type);
     }
     else
         throw Exception("Incorrect CREATE query: required list of column descriptions or AS section or SELECT.", ErrorCodes::INCORRECT_QUERY);
@@ -387,11 +387,11 @@ ColumnsDescription InterpreterCreateQuery::setColumns(
             throw Exception("Column " + backQuoteIfNeed(column_name_and_type.name) + " already exists", ErrorCodes::DUPLICATE_COLUMN);
     };
 
-    for (const auto & elem : res.columns)
+    for (const auto & elem : res.ordinary)
         check_column_already_exists(elem);
     for (const auto & elem : res.materialized)
         check_column_already_exists(elem);
-    for (const auto & elem : res.alias)
+    for (const auto & elem : res.aliases)
         check_column_already_exists(elem);
 
     return res;

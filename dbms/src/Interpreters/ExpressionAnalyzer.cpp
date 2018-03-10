@@ -1149,7 +1149,7 @@ void ExpressionAnalyzer::addAliasColumns()
     if (!storage)
         return;
 
-    source_columns.insert(std::end(source_columns), std::begin(storage->columns.alias), std::end(storage->columns.alias));
+    source_columns.insert(std::end(source_columns), std::begin(storage->columns.aliases), std::end(storage->columns.aliases));
 }
 
 

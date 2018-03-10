@@ -11,17 +11,17 @@ namespace DB
 
 struct ColumnsDescription
 {
-    NamesAndTypesList columns;
+    NamesAndTypesList ordinary;
     NamesAndTypesList materialized;
-    NamesAndTypesList alias;
+    NamesAndTypesList aliases;
     ColumnDefaults defaults;
 
 
     bool operator==(const ColumnsDescription & other) const
     {
-        return columns == other.columns
+        return ordinary == other.ordinary
             && materialized == other.materialized
-            && alias == other.alias
+            && aliases == other.aliases
             && defaults == other.defaults;
     }
 
@@ -30,7 +30,7 @@ struct ColumnsDescription
     /** Get a list of names and table column types, only non-virtual.
      */
     NamesAndTypesList getList() const;
-    const NamesAndTypesList & getListNonMaterialized() const { return columns; }
+    const NamesAndTypesList & getListNonMaterialized() const { return ordinary; }
 
     /** Get a list of column names.
      */

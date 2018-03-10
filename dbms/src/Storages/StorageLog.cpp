@@ -465,8 +465,8 @@ void StorageLog::rename(const String & new_path_to_db, const String & /*new_data
 
 const StorageLog::Marks & StorageLog::getMarksWithRealRowCount() const
 {
-    const String & column_name = columns.columns.front().name;
-    const IDataType & column_type = *columns.columns.front().type;
+    const String & column_name = columns.ordinary.front().name;
+    const IDataType & column_type = *columns.ordinary.front().type;
     String filename;
 
     /** We take marks from first column.

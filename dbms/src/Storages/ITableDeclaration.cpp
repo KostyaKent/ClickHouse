@@ -39,7 +39,7 @@ Block ITableDeclaration::getSampleBlock() const
 {
     Block res;
 
-    for (const auto & col : boost::join(columns.columns, columns.materialized))
+    for (const auto & col : boost::join(columns.ordinary, columns.materialized))
         res.insert({ col.type->createColumn(), col.type, col.name });
 
     return res;
@@ -50,7 +50,7 @@ Block ITableDeclaration::getSampleBlockNonMaterialized() const
 {
     Block res;
 
-    for (const auto & col : columns.columns)
+    for (const auto & col : columns.ordinary)
         res.insert({ col.type->createColumn(), col.type, col.name });
 
     return res;
@@ -244,7 +244,7 @@ void ITableDeclaration::check(const Block & block, bool need_all) const
 ITableDeclaration::ITableDeclaration(ColumnsDescription columns_)
     : columns{std::move(columns_)}
 {
-    if (columns.columns.empty())
+    if (columns.ordinary.empty())
         throw Exception("Empty list of columns passed to storage constructor", ErrorCodes::EMPTY_LIST_OF_COLUMNS_PASSED);
 }
 
