@@ -16,6 +16,21 @@ struct ColumnsDescription
     NamesAndTypesList aliases;
     ColumnDefaults defaults;
 
+    ColumnsDescription() = default;
+
+    ColumnsDescription(
+        NamesAndTypesList ordinary_,
+        NamesAndTypesList materialized_,
+        NamesAndTypesList aliases_,
+        ColumnDefaults defaults_)
+        : ordinary(std::move(ordinary_))
+        , materialized(std::move(materialized_))
+        , aliases(std::move(aliases_))
+        , defaults(std::move(defaults_))
+    {}
+
+    explicit ColumnsDescription(NamesAndTypesList ordinary_) : ordinary(std::move(ordinary_)) {}
+
 
     bool operator==(const ColumnsDescription & other) const
     {

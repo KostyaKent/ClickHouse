@@ -79,12 +79,7 @@ StoragePtr TableFunctionMerge::executeImpl(const ASTPtr & ast_function, const Co
 
     auto res = StorageMerge::create(
         getName(),
-        ColumnsDescription{
-            chooseColumns(source_database, table_name_regexp, context),
-            NamesAndTypesList{},
-            NamesAndTypesList{},
-            ColumnDefaults{},
-        },
+        ColumnsDescription{chooseColumns(source_database, table_name_regexp, context)},
         source_database,
         table_name_regexp,
         context);

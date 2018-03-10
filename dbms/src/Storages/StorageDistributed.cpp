@@ -158,7 +158,7 @@ StoragePtr StorageDistributed::createWithOwnCluster(
     const Context & context_)
 {
     auto res = ext::shared_ptr_helper<StorageDistributed>::create(
-        name_, ColumnsDescription{columns_, NamesAndTypesList(), NamesAndTypesList(), ColumnDefaults()},
+        name_, ColumnsDescription{columns_},
         remote_database_, remote_table_, String{}, context_, ASTPtr(), String());
 
     res->owned_cluster = owned_cluster_;
